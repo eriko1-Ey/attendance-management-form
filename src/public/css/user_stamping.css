@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+/* 勤怠登録画面 */
+.attendance-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* 勤務ステータス */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: black;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+/* 日付と時間 */
+.date {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.time {
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 出勤ボタン */
+.attendance-button {
+    width: 120px;
+    padding: 10px;
+    margin-top: 50px;
+    font-size: 16px;
+    color: white;
+    background-color: black;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.attendance-button:hover {
+    background-color: #333;
+}
