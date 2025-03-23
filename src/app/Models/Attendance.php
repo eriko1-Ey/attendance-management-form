@@ -20,7 +20,7 @@ class Attendance extends Model
     // 勤怠情報は「複数の休憩」を持つ（1対多）
     public function breaks()
     {
-        return $this->hasMany(BreakRecord::class);
+        return $this->hasMany(BreakRecord::class, 'attendance_id');
     }
 
     // 勤怠情報は「複数の修正申請」を持つ（1対多）

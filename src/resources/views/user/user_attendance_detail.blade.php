@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{asset('css/staff_attendance_detail.css')}}" />
+<link rel="stylesheet" href="{{asset('css/user_attendance_detail.css')}}" />
 @endsection
 
 @section('title','勤怠詳細')
@@ -13,38 +13,46 @@
     <h2 class="title">勤怠詳細</h2>
 
     <div class="details-box">
-        <table class="details-table">
-            <tr>
-                <th>名前</th>
-                <td>西 伶奈</td>
-            </tr>
-            <tr>
-                <th>日付</th>
-                <td>2023年 6月1日</td>
-            </tr>
-            <tr>
-                <th>出勤・退勤</th>
-                <td>
-                    <input type="text" value="09:00" readonly /> 〜
-                    <input type="text" value="18:00" readonly />
-                </td>
-            </tr>
-            <tr>
-                <th>休憩</th>
-                <td>
-                    <input type="text" value="12:00" readonly /> 〜
-                    <input type="text" value="13:00" readonly />
-                </td>
-            </tr>
-            <tr>
-                <th>備考</th>
-                <td>
-                    <textarea readonly>電車遅延のため</textarea>
-                </td>
-            </tr>
-        </table>
+        <form method="POST" action="{{ route('user.attendance.editRequest', ['id' => $attendance->id]) }}">
+            @csrf
+            <table class="details-table">
+                <tr>
+                    <th>名前</th>
+                    <td>{{ $attendance->user->name }}</td>
+                </tr>
+                <tr>
+                    <th>日付</th>
+                    <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</td>
+                </tr>
+                <tr>
+                    <th>出勤・退勤</th>
+                    <td>
+                        <input type="time" name="clock_in" value="{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}" />
+                        〜
+                        <input type="time" name="clock_out" value="{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>休憩</th>
+                    <td>
+                        @foreach($attendance->breaks as $i => $break)
+                        <div>
+                            <input type="text" value="{{ \Carbon\Carbon::parse($break->start_time)->format('H:i') }}" readonly />〜
+                            <input type="text" value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}" readonly />
+                        </div>
+                        @endforeach
+                    </td>
+                </tr>
+                <tr>
+                    <th>備考</th>
+                    <td>
+                        <textarea name="reason" required></textarea>
+                    </td>
+                </tr>
+            </table>
     </div>
 
-    <button class="edit-button">修正</button>
+    <button type="submit" class="edit-button">修正</button>
+    </form>
 </div>
 @endsection

@@ -54,12 +54,6 @@ class UserController extends Controller
         return redirect()->route('getStamping'); // 出勤登録画面へ
     }
 
-    //出勤登録画面表示
-    public function getStamping()
-    {
-        return view('user.user_stamping');
-    }
-
     //ログアウト
     public function logout()
     {
