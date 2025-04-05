@@ -10,13 +10,13 @@
 
 @section('content')
 <div class="container">
-    <h2 class="title" id="attendance-title"></h2>
+    <h2 class="title">{{ \Carbon\Carbon::parse($date)->format('Y年m月d日') }}の勤怠</h2>
 
     <!-- 日付選択 -->
     <div class="date-selector">
-        <button class="prev-day">&lt; 前日</button>
-        <input type="date" id="attendance-date" class="current-date" />
-        <button class="next-day">翌日 &gt;</button>
+        <a href="{{ route('getAdminAttendanceRecord', ['date' => \Carbon\Carbon::parse($date)->subDay()->toDateString()]) }}" class="btn btn-primary">&lt; 前日</a>
+        <input type="date" id="attendance-date" class="current-date" value="{{ $date }}" />
+        <a href="{{ route('getAdminAttendanceRecord', ['date' => \Carbon\Carbon::parse($date)->addDay()->toDateString()]) }}" class="btn btn-primary">翌日 &gt;</a>
     </div>
 
     <div class="attendance-list-box">
@@ -32,124 +32,50 @@
                 </tr>
             </thead>
             <tbody id="attendance-table-body">
-                <!-- JavaScriptで動的にデータを追加 -->
-                <script>
-                    document.addEventListener("DOMContentLoaded", function() {
-                        const dateInput = document.getElementById("attendance-date");
-                        const attendanceTitle =
-                            document.getElementById("attendance-title");
-                        const prevDayButton = document.querySelector(".prev-day");
-                        const nextDayButton = document.querySelector(".next-day");
-                        const attendanceTableBody = document.getElementById(
-                            "attendance-table-body"
-                        );
-
-                        // 初期日付を本日の日付に設定
-                        let currentDate = new Date();
-                        updateDate();
-
-                        // 日付を更新
-                        function updateDate() {
-                            const formattedDate = formatDate(currentDate);
-                            attendanceTitle.textContent = `${formattedDate}の勤怠`;
-                            dateInput.value = formatDateInput(currentDate);
-                            updateAttendanceData(formattedDate);
-                        }
-
-                        // 日付の書式を YYYY年M月D日 にする
-                        function formatDate(date) {
-                            const year = date.getFullYear();
-                            const month = date.getMonth() + 1;
-                            const day = date.getDate();
-                            return `${year}年${month}月${day}日`;
-                        }
-
-                        // input type="date" 用のフォーマット YYYY-MM-DD
-                        function formatDateInput(date) {
-                            const year = date.getFullYear();
-                            const month = (date.getMonth() + 1)
-                                .toString()
-                                .padStart(2, "0");
-                            const day = date.getDate().toString().padStart(2, "0");
-                            return `${year}-${month}-${day}`;
-                        }
-
-                        // 前日ボタン
-                        prevDayButton.addEventListener("click", function() {
-                            currentDate.setDate(currentDate.getDate() - 1);
-                            updateDate();
+                @foreach ($attendances as $attendance)
+                <tr>
+                    <td>{{ $attendance->user->name }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
+                    <td>
+                        @php
+                        $breakTime = $attendance->breaks->sum(function($break) {
+                        return \Carbon\Carbon::parse($break->end_time)->diffInMinutes(\Carbon\Carbon::parse($break->start_time));
                         });
-
-                        // 翌日ボタン
-                        nextDayButton.addEventListener("click", function() {
-                            currentDate.setDate(currentDate.getDate() + 1);
-                            updateDate();
-                        });
-
-                        // カレンダーで日付変更
-                        dateInput.addEventListener("change", function() {
-                            currentDate = new Date(this.value);
-                            updateDate();
-                        });
-
-                        // 勤怠データを更新（仮のダミーデータ）
-                        function updateAttendanceData(date) {
-                            const dummyData = [{
-                                    name: "山田 直志",
-                                    start: "09:00",
-                                    end: "18:00",
-                                    break: "1:00",
-                                    total: "8:00",
-                                },
-                                {
-                                    name: "山田 太郎",
-                                    start: "09:00",
-                                    end: "18:00",
-                                    break: "1:00",
-                                    total: "8:00",
-                                },
-                                {
-                                    name: "佐藤 一郎",
-                                    start: "09:00",
-                                    end: "18:00",
-                                    break: "1:00",
-                                    total: "8:00",
-                                },
-                                {
-                                    name: "松田 智美",
-                                    start: "09:00",
-                                    end: "18:00",
-                                    break: "1:00",
-                                    total: "8:00",
-                                },
-                                {
-                                    name: "中島 則夫",
-                                    start: "09:00",
-                                    end: "18:00",
-                                    break: "1:00",
-                                    total: "8:00",
-                                },
-                            ];
-
-                            attendanceTableBody.innerHTML = dummyData
-                                .map(
-                                    (user) => `
-            <tr>
-                <td>${user.name}</td>
-                <td>${user.start}</td>
-                <td>${user.end}</td>
-                <td>${user.break}</td>
-                <td>${user.total}</td>
-                <td><a href="#">詳細</a></td>
-            </tr>
-        `
-                                )
-                                .join("");
+                        $breakHours = floor($breakTime / 60);
+                        $breakMinutes = $breakTime % 60;
+                        @endphp
+                        {{ sprintf('%02d:%02d', $breakHours, $breakMinutes) }}
+                    </td>
+                    <td>
+                        @php
+                        if ($attendance->clock_in && $attendance->clock_out) {
+                        $workTime = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_in)) - $breakTime;
+                        $workHours = floor($workTime / 60);
+                        $workMinutes = $workTime % 60;
+                        echo sprintf('%02d:%02d', $workHours, $workMinutes);
+                        } else {
+                        echo '-';
                         }
-                    });
-                </script>
+                        @endphp
+                    </td>
+                    <td><a href="{{ route('admin.attendance.edit', ['id' => $attendance->id]) }}">詳細</a></td>
+                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateInput = document.getElementById("attendance-date");
+
+        // カレンダーで日付変更
+        dateInput.addEventListener("change", function() {
+            const selectedDate = this.value;
+            window.location.href = "{{ route('getAdminAttendanceRecord') }}?date=" + selectedDate;
+        });
+    });
+</script>
 @endsection

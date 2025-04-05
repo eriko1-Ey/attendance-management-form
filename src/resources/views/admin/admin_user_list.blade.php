@@ -22,36 +22,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($users as $user)
                     <tr>
-                        <td>白鳥 玲奈</td>
-                        <td>reina@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>
+                            <a href="{{ route('getUserAttendanceRecord', ['user_id' => $user->id]) }}">詳細</a>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>山田 太郎</td>
-                        <td>taro.y@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
-                    </tr>
-                    <tr>
-                        <td>田中 一郎</td>
-                        <td>ichiro.t@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
-                    </tr>
-                    <tr>
-                        <td>山本 啓一</td>
-                        <td>keiichi.y@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
-                    </tr>
-                    <tr>
-                        <td>松田 智美</td>
-                        <td>tomomi.m@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
-                    </tr>
-                    <tr>
-                        <td>中島 則夫</td>
-                        <td>norio.n@coachtech.com</td>
-                        <td><a href="#">詳細</a></td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

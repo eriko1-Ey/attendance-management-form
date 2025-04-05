@@ -41,6 +41,11 @@
                             <input type="text" value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}" readonly />
                         </div>
                         @endforeach
+                        <div>
+                            <input type="time" name="breaks[{{ count($attendance->breaks) }}][start_time]" />
+                            〜
+                            <input type="time" name="breaks[{{ count($attendance->breaks) }}][end_time]" />
+                        </div>
                     </td>
                 </tr>
                 <tr>

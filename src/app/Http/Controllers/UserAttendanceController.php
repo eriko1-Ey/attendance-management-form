@@ -31,7 +31,7 @@ class UserAttendanceController extends Controller
         $user = Auth::user();
         $today = Carbon::today()->toDateString();
 
-        //調べる。レコードを取得するか作成する。意図を確認。
+        //調べる。レコードを取得するか作成する。
         $attendance = Attendance::firstOrCreate(
             ['user_id' => $user->id, 'date' => $today],
             ['clock_in' => Carbon::now(), 'status' => 'working']
@@ -160,6 +160,35 @@ class UserAttendanceController extends Controller
         $clockIn = Carbon::parse($date . ' ' . $request->clock_in);
         $clockOut = Carbon::parse($date . ' ' . $request->clock_out);
 
+        // 勤怠情報の更新
+        $attendance->update([
+            'clock_in' => $clockIn,
+            'clock_out' => $clockOut,
+        ]);
+
+        // 既存の休憩データを削除
+        $attendance->breaks()->delete();
+
+        // 新しい休憩データを作成
+        if ($request->has('breaks')) {
+            foreach ($request->breaks as $break) {
+                if (!empty($break['start_time']) && !empty($break['end_time'])) {
+                    $attendance->breaks()->create([
+                        'start_time' => Carbon::parse($date . ' ' . $break['start_time']),
+                        'end_time' => Carbon::parse($date . ' ' . $break['end_time']),
+                    ]);
+                }
+            }
+        }
+
+        // 修正申請の登録
+        AttendanceEdit::create([
+            'user_id' => Auth::id(),
+            'attendance_id' => $attendance->id,
+            'status' => 'pending',
+            'reason' => $request->reason,
+        ]);
+
         // 修正内容を保存（必要に応じて申請に保存だけでも可）
         $attendance->clock_in = $clockIn;
         $attendance->clock_out = $clockOut;
@@ -174,12 +203,5 @@ class UserAttendanceController extends Controller
         ]);
 
         return redirect()->route('user.attendance.postRequestList')->with('success', '修正申請を送信しました');
-    }
-
-    // 申請一覧画面表示
-    public function getEditRequestList()
-    {
-        $edits = AttendanceEdit::with('user', 'attendance')->orderBy('created_at', 'desc')->get();
-        return view('user.user_application_list', compact('edits'));
     }
 }

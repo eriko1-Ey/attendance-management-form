@@ -10,13 +10,23 @@
 
 @section('content')
 <div class="container">
-    <h2 class="title">西玲奈さんの勤怠一覧</h2>
+    <h2 class="title">{{ $user->name }}さんの{{ $year }}年{{ $month }}月の勤怠一覧</h2>
 
     <!-- 月選択 -->
     <div class="month-selector">
-        <button class="prev-month">&lt; 前月</button>
-        <span class="current-month" id="currentMonth"></span>
-        <button class="next-month">翌月 &gt;</button>
+        <a class="prev-month"
+            href="{{ route('getUserAttendanceRecord', [
+       'user_id' => $user->id,
+       'year' => \Carbon\Carbon::create($year, $month, 1)->subMonth()->year,
+       'month' => \Carbon\Carbon::create($year, $month, 1)->subMonth()->month
+   ]) }}">前月</a>
+        <span class="current-month">📅 {{ $year }}/{{ str_pad($month, 2, '0', STR_PAD_LEFT) }}</span>
+        <a class="next-month"
+            href="{{ route('getUserAttendanceRecord', [
+       'user_id' => $user->id,
+       'year' => \Carbon\Carbon::create($year, $month, 1)->addMonth()->year,
+       'month' => \Carbon\Carbon::create($year, $month, 1)->addMonth()->month
+   ]) }}">翌月</a>
     </div>
 
     <div class="attendance-list-box">
@@ -32,81 +42,52 @@
                 </tr>
             </thead>
             <tbody id="attendanceTableBody">
-                <!-- JavaScript(月末までの表示) -->
-                <script>
-                    document.addEventListener("DOMContentLoaded", function() {
-                        const currentMonthElement =
-                            document.getElementById("currentMonth");
-                        const attendanceTableBody = document.getElementById(
-                            "attendanceTableBody"
-                        );
-                        const prevMonthButton = document.querySelector(".prev-month");
-                        const nextMonthButton = document.querySelector(".next-month");
+                @foreach ($dateRange as $date)
+                @php
+                $attendance = $attendances[$date] ?? null;
 
-                        let currentDate = new Date();
-                        updateMonth();
+                $clockIn = isset($attendance) && $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-';
+                $clockOut = isset($attendance) && $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-';
 
-                        // 月の表示を更新
-                        function updateMonth() {
-                            const year = currentDate.getFullYear();
-                            const month = currentDate.getMonth() + 1;
-                            currentMonthElement.textContent = `📅 ${year}/${month
-                      .toString()
-                      .padStart(2, "0")}`;
-                            generateAttendanceTable(year, month);
-                        }
+                $breakTime = isset($attendance) && $attendance->breaks ? $attendance->breaks->sum(function($break) {
+                return \Carbon\Carbon::parse($break->end_time)->diffInMinutes(\Carbon\Carbon::parse($break->start_time));
+                }) : 0;
 
-                        // 勤怠テーブルを動的に生成
-                        function generateAttendanceTable(year, month) {
-                            attendanceTableBody.innerHTML = ""; // 初期化
-                            const lastDay = new Date(year, month, 0).getDate();
+                $totalMinutes = ($attendance && $attendance->clock_in && $attendance->clock_out)
+                ? \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_in)) - $breakTime
+                : 0;
 
-                            for (let day = 1; day <= lastDay; day++) {
-                                const date = new Date(year, month - 1, day);
-                                const dayOfWeek = [
-                                    "日",
-                                    "月",
-                                    "火",
-                                    "水",
-                                    "木",
-                                    "金",
-                                    "土",
-                                ][date.getDay()];
-                                const dateString = `${month
-                        .toString()
-                        .padStart(2, "0")}/${day
-                        .toString()
-                        .padStart(2, "0")}(${dayOfWeek})`;
+                $workTime = $totalMinutes > 0 ? sprintf('%02d:%02d', floor($totalMinutes / 60), $totalMinutes % 60) : '-';
 
-                                const row = `
+                $breakTimeFormatted = $breakTime > 0 ? sprintf('%02d:%02d', floor($breakTime / 60), $breakTime % 60) : '-';
+
+                $formattedDate = \Carbon\Carbon::parse($date)->format('Y/m/d(D)');
+                @endphp
+
                 <tr>
-                    <td>${dateString}</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#">詳細</a></td>
+                    <td>{{ $formattedDate }}</td>
+                    <td>{{ $clockIn }}</td>
+                    <td>{{ $clockOut }}</td>
+                    <td>{{ $breakTimeFormatted }}</td>
+                    <td>{{ $workTime }}</td>
+                    <td>
+                        @if ($attendance)
+                        <a href="{{ route('admin.attendance.edit', ['id' => $attendance->id]) }}">詳細</a>
+                        @else
+                        -
+                        @endif
+                    </td>
                 </tr>
-            `;
-                                attendanceTableBody.innerHTML += row;
-                            }
-                        }
-
-                        // 前月ボタン
-                        prevMonthButton.addEventListener("click", function() {
-                            currentDate.setMonth(currentDate.getMonth() - 1);
-                            updateMonth();
-                        });
-
-                        // 翌月ボタン
-                        nextMonthButton.addEventListener("click", function() {
-                            currentDate.setMonth(currentDate.getMonth() + 1);
-                            updateMonth();
-                        });
-                    });
-                </script>
+                @endforeach
             </tbody>
+
         </table>
+        <div style="text-align: right; margin-top: 10px;">
+            <a href="{{ route('admin.user.attendance.csv', ['user_id' => $user->id, 'year' => $year, 'month' => $month]) }}" class="btn btn-success">
+                CSV出力
+            </a>
+        </div>
     </div>
 </div>
+
 @endsection

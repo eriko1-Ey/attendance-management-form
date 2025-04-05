@@ -14,7 +14,7 @@
 
     <!-- タブ -->
     <div class="tab-container">
-        <div class="tab active" data-target="pending">申請待ち</div>
+        <div class="tab active" data-target="pending">承認待ち</div>
         <div class="tab" data-target="approved">承認済み</div>
     </div>
 
@@ -32,14 +32,16 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach($pendingEdits as $edit)
                 <tr>
-                    <td>休暇</td>
-                    <td>西 博貴</td>
-                    <td>2023/06/01</td>
-                    <td>通院のため</td>
-                    <td>2023/06/02</td>
+                    <td>勤怠修正</td>
+                    <td>{{ $edit->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($edit->attendance->date)->format('Y/m/d') }}</td>
+                    <td>{{ $edit->reason }}</td>
+                    <td>{{ \Carbon\Carbon::parse($edit->created_at)->format('Y/m/d') }}</td>
                     <td><a href="#">詳細</a></td>
                 </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -58,14 +60,16 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach($approvedEdits as $edit)
                 <tr>
-                    <td>休暇</td>
-                    <td>西 博貴</td>
-                    <td>2023/05/25</td>
-                    <td>私用のため</td>
-                    <td>2023/05/26</td>
+                    <td>勤怠修正</td>
+                    <td>{{ $edit->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($edit->attendance->date)->format('Y/m/d') }}</td>
+                    <td>{{ $edit->reason }}</td>
+                    <td>{{ \Carbon\Carbon::parse($edit->created_at)->format('Y/m/d') }}</td>
                     <td><a href="#">詳細</a></td>
                 </tr>
+                @endforeach
             </tbody>
         </table>
         <script>

@@ -12,7 +12,8 @@
 <div class="login-container">
     <h2 class="login-title">管理者ログイン</h2>
 
-    <form action="#" method="POST">
+    <form action="{{ route('postAdminLogin') }}" method="POST">
+        @csrf
         <div class="input-group">
             <label for="email">メールアドレス</label>
             <input type="email" id="email" name="email" required />

@@ -10,10 +10,10 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return $next($request);
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('getAdminLogin');
         }
 
-        return redirect('/login')->with('error', '管理者専用ページです。');
+        return $next($request);
     }
 }
