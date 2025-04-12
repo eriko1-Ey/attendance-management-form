@@ -3,7 +3,7 @@ COACHTECH FLEAMARKET
 【Dockerビルド】
 
 
-1.　git clone git@github.com:eriko1-Ey/coachtech_fleamarket.gitを実行する。
+1.　git clone git@github.com:eriko1-Ey/attendance-management-form.gitを実行する。
 
 2.　DockerDesktopアプリを立ち上げる。
 
