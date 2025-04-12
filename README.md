@@ -34,7 +34,6 @@ mysql:
 4.　.envに以下の環境変数に編集する。
 
 　　　DB_CONNECTION=mysql
-   
 　　　DB_HOST=mysql
    
 　　　DB_PORT=3306
