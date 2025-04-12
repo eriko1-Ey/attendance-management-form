@@ -34,6 +34,7 @@ mysql:
 4.　.envに以下の環境変数に編集する。
 
 　　　DB_CONNECTION=mysql
+   
 　　　DB_HOST=mysql
    
 　　　DB_PORT=3306
@@ -46,20 +47,29 @@ mysql:
    
    
 5.　アプリケーションキーの作成(phpコンテナ内）
+
 　　php artisan key:generate
   
 6.　マイグレーションの実行(phpコンテナ内）
+
 　　php artisan migrate
   
 7.　シーディングの実行(phpコンテナ内）
+
 　　php artisan db:seed
 
 8.　シンボリックリンクの作成
+
 　　php artisan storage/link
+  
   ※失敗した場合は、下記を実行する。
+  
   cd src/publilc
+  
   unlink storage
+  
   ln -s ../storage/app/public storage
+  
 
 【ER図】
 
