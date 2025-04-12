@@ -16,8 +16,11 @@ COACHTECH FLEAMARKET
    エラーが発生する場合は、docker-compose.ymlファイルの「mysql」内に「platform」の項目を追加で記載してください。
 
 mysql:
+
     platform: linux/x86_64　(この文を追加する)
+    
     image: mysql:8.0.26
+    
     environment:
     
 【Laravel環境構築】
