@@ -9,11 +9,11 @@
     @yield('css')
 
     @if(isset($headerType) && $headerType === 'admin')
-    <link rel="stylesheet" href="{{ asset('css/header_admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header_admin.css') }}?v={{ time() }}">
     @elseif(isset($headerType) && $headerType === 'user')
-    <link rel="stylesheet" href="{{ asset('css/header_user.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header_user.css')}}?v={{ time() }}">
     @elseif(isset($headerType) && $headerType === 'common')
-    <link rel="stylesheet" href="{{ asset('css/header_common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header_common.css')}}?v={{ time() }}">
     @endif
 </head>
 

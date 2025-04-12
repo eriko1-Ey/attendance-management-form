@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{asset('css/user_attendance_detail.css')}}" />
+<link rel="stylesheet" href="{{asset('css/user_attendance_detail.css')}}?v={{ time() }}" />
 @endsection
 
 @section('title','勤怠詳細')
@@ -27,9 +27,9 @@
                 <tr>
                     <th>出勤・退勤</th>
                     <td>
-                        <input type="time" name="clock_in" value="{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}" />
+                        <input type="time" name="clock_in" value="{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif />
                         〜
-                        <input type="time" name="clock_out" value="{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}" />
+                        <input type="time" name="clock_out" value="{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
                     </td>
                 </tr>
                 <tr>
@@ -37,27 +37,40 @@
                     <td>
                         @foreach($attendance->breaks as $i => $break)
                         <div>
-                            <input type="text" value="{{ \Carbon\Carbon::parse($break->start_time)->format('H:i') }}" readonly />〜
-                            <input type="text" value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}" readonly />
+                            <input type="time" name="breaks[{{ $i }}][start_time]" value="{{ \Carbon\Carbon::parse($break->start_time)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
+                            〜
+                            <input type="time" name="breaks[{{ $i }}][end_time]" value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
                         </div>
                         @endforeach
+                        @if (!isset($latestEdit) || $latestEdit->status !== 'approved')
                         <div>
                             <input type="time" name="breaks[{{ count($attendance->breaks) }}][start_time]" />
                             〜
                             <input type="time" name="breaks[{{ count($attendance->breaks) }}][end_time]" />
                         </div>
+                        @endif
                     </td>
                 </tr>
                 <tr>
                     <th>備考</th>
                     <td>
-                        <textarea name="reason" required></textarea>
+                        <textarea name="reason" required
+                            @if(isset($latestEdit) && $latestEdit->status === 'approved') disabled @endif
+        >{{ old('reason', $latestEdit->reason ?? '') }}</textarea>
                     </td>
                 </tr>
             </table>
     </div>
 
+    @if (isset($isApplicationPage) && $isApplicationPage)
+    @if ($latestEdit->status === 'pending')
+    <p class="text-warning">承認待ちのため修正はできません。</p>
+    @elseif ($latestEdit->status === 'approved')
+    <button type="button" class="approved-button" disabled>承認済み</button>
+    @endif
+    @else
     <button type="submit" class="edit-button">修正</button>
+    @endif
     </form>
 </div>
 @endsection

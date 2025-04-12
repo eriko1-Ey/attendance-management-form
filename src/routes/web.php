@@ -6,6 +6,7 @@ use App\Http\Controllers\UserAttendanceController;
 use App\Http\Controllers\UserApplicationListController;
 use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\AdminUserListController;
+use App\Http\Controllers\AdminApplicationListController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,8 +30,12 @@ Route::middleware(['auth:admin', 'admin'])->group(function () {
     Route::get('/admin/attendance/staff/{user_id}', [AdminAttendanceController::class, 'getUserAttendanceRecord'])->name('getUserAttendanceRecord'); //スタッフの月次勤怠表示
     Route::get('/admin/staff/{user_id}/attendance/csv', [AdminAttendanceController::class, 'exportCsv'])->name('admin.user.attendance.csv'); //csv出力
     Route::get('/admin/attendance/{id}/edit', [AdminAttendanceController::class, 'editAttendance'])->name('admin.attendance.edit'); //月次詳細画面表示
-    Route::post('/admin/attendance/{id}/update', [AdminAttendanceController::class, 'updateAttendance'])->name('admin.attendance.update'); //詳細編集処理
-    //Route::post('/admin/logout', [AdminController::class, 'AdminLogout'])->name('AdminLogout'); //ログアウト
+    Route::post('/admin/attendance/{id}/update', [AdminAttendanceController::class, 'updateAttendance'])->name('admin.attendance.update'); //月次詳細編集処理
+    Route::get('/admin_stamp_correction_request/list', [AdminApplicationListController::class, 'getAdminEditRequestList'])->name('getAdminEditRequestList'); //申請一覧表示
+    Route::get('/admin/application/{id}', [AdminApplicationListController::class, 'getApprovalPage'])->name('getApprovalPage'); //承認画面表示
+    Route::post('/admin/application/{id}/approve', [AdminApplicationListController::class, 'approveEdit'])->name('approveEdit'); //承認画面処理
+    Route::get('/admin/edit-requests/json', [AdminApplicationListController::class, 'getAdminEditRequestListJson'])->name('admin.editRequest.json'); //リアルタイムで更新
+    Route::post('/admin/logout', [AdminController::class, 'AdminLogout'])->name('AdminLogout'); //ログアウト
 });
 
 //一般ユーザー（ログイン前）
@@ -49,5 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/attendance/{id}', [UserAttendanceController::class, 'getDetail'])->name('user.attendance.detail'); //勤怠詳細画面表示
     Route::post('/attendance/{id}/edit-request', [UserAttendanceController::class, 'postEditRequest'])->name('user.attendance.editRequest'); //修正申請処理
     Route::get('/stamp_correction_request/list', [UserApplicationListController::class, 'getEditRequestList'])->name('user.attendance.postRequestList'); //申請一覧表示
-    //Route::post('/logout', [UserController::class, 'logout'])->name('logout'); //ログアウト
+    Route::get('/application/{id}', [UserApplicationListController::class, 'getEditRequestDetail'])->name('user.editRequest.detail'); //申請一覧の詳細画面表示
+    Route::get('/user/edit-requests/json', [UserApplicationListController::class, 'getEditRequestListJson'])->name('user.editRequest.json'); //承認待ち/済みの切り替えをリアルタイム表示
+    Route::post('/logout', [UserController::class, 'logout'])->name('logout'); //ログアウト
 });

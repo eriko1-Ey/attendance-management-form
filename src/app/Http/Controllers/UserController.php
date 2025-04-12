@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\UserRegisterRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class UserController extends Controller
     }
 
     //一般ユーザーログイン処理
-    public function postLogin(Request $request)
+    public function postLogin(UserLoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
@@ -40,7 +41,7 @@ class UserController extends Controller
     }
 
     //会員登録処理
-    public function postRegister(Request $request)
+    public function postRegister(UserRegisterRequest $request)
     {
         $user = User::create([
             'name' => $request->name,

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Faker\Factory as FakerFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        app()->setLocale('ja'); // Laravelのロケール変更
+        $faker = FakerFactory::create('ja_JP'); // Fakerのロケール変更
+
+        $this->call([
+            UserSeeder::class,
+            AttendanceSeeder::class,
+            AttendanceEditSeeder::class,
+            BreakRecordSeeder::class,
+            AdminSeeder::class,
+        ]);
     }
 }

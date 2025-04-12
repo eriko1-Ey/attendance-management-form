@@ -16,12 +16,22 @@
         @csrf
         <div class="input-group">
             <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" required />
+            <input type="email" id="email" name="email" placeholder="メールアドレスを入力" />
+        </div>
+        <div style="color:red">
+            @error('email')
+            {{ $message }}
+            @enderror
         </div>
 
         <div class="input-group">
             <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password" placeholder="パスワードを入力" />
+        </div>
+        <div style="color:red">
+            @error('password')
+            {{ $message }}
+            @enderror
         </div>
 
         <button type="submit" class="login-button">管理者ログインする</button>

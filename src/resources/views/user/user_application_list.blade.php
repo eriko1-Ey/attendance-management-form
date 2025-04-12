@@ -39,7 +39,7 @@
                     <td>{{ \Carbon\Carbon::parse($edit->attendance->date)->format('Y/m/d') }}</td>
                     <td>{{ $edit->reason }}</td>
                     <td>{{ \Carbon\Carbon::parse($edit->created_at)->format('Y/m/d') }}</td>
-                    <td><a href="#">詳細</a></td>
+                    <td><a href="{{ route('user.editRequest.detail', ['id' => $edit->id]) }}">詳細</a></td>
                 </tr>
                 @endforeach
             </tbody>
@@ -67,11 +67,12 @@
                     <td>{{ \Carbon\Carbon::parse($edit->attendance->date)->format('Y/m/d') }}</td>
                     <td>{{ $edit->reason }}</td>
                     <td>{{ \Carbon\Carbon::parse($edit->created_at)->format('Y/m/d') }}</td>
-                    <td><a href="#">詳細</a></td>
+                    <td><a href="{{ route('user.editRequest.detail', ['id' => $edit->id]) }}">詳細</a></td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const tabs = document.querySelectorAll(".tab");
@@ -95,6 +96,61 @@
                 });
             });
         </script>
+
+        <!--承認待ち/承認済みの切り替えをリアルタイムで表示する-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // タブ切り替え（すでにある処理）は省略...
+
+                // 10秒ごとにデータ更新
+                setInterval(fetchAndUpdateRequests, 10000); // 10000ms = 10秒
+
+                function fetchAndUpdateRequests() {
+                    fetch("{{ route('user.editRequest.json') }}")
+                        .then(response => response.json())
+                        .then(data => {
+                            updateRequestTable('pending', data.pending);
+                            updateRequestTable('approved', data.approved);
+                        });
+                }
+
+                function updateRequestTable(type, edits) {
+                    const tableBody = document.querySelector(`#${type} tbody`);
+                    tableBody.innerHTML = ''; // 一旦中身をクリア
+
+                    if (edits.length === 0) {
+                        const row = document.createElement('tr');
+                        const cell = document.createElement('td');
+                        cell.colSpan = 6;
+                        cell.textContent = type === 'pending' ? '申請待ちはありません。' : '承認済みはありません。';
+                        row.appendChild(cell);
+                        tableBody.appendChild(row);
+                        return;
+                    }
+
+                    edits.forEach(edit => {
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                <td>勤怠修正</td>
+                <td>${edit.user.name}</td>
+                <td>${formatDate(edit.attendance.date)}</td>
+                <td>${edit.reason}</td>
+                <td>${formatDate(edit.created_at)}</td>
+                <td><a href="/application/${edit.id}">詳細</a></td>
+            `;
+
+                        tableBody.appendChild(row);
+                    });
+                }
+
+                function formatDate(dateStr) {
+                    const date = new Date(dateStr);
+                    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+                }
+            });
+        </script>
+
     </div>
 </div>
 @endsection

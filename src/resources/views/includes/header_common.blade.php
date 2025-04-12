@@ -1,3 +1,3 @@
 <header class="header">
-    <div class="logo">COACHTECH</div>
+    <img src="{{ asset('storage/logo.svg') }}" alt="COACHTECHロゴ" class="logo" />
 </header>

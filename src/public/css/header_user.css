@@ -13,8 +13,22 @@
     font-weight: bold;
 }
 
-.nav a {
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav a,
+.logout-btn {
     color: white;
     text-decoration: none;
     margin-left: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+}
+
+.logout-form {
+    margin: 0;
 }

@@ -9,6 +9,9 @@ class AttendanceEdit extends Model
 {
     use HasFactory;
 
+    // ★ JSONやレスポンスでuser・attendanceを自動で一緒に読み込む
+    protected $with = ['user', 'attendance'];
+
     protected $fillable = ['user_id', 'attendance_id', 'status', 'reason'];
 
     // 修正申請は「1人のユーザー」に属する（多対1）

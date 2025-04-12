@@ -155,6 +155,14 @@ class UserAttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        // 直近の修正申請を取得
+        $latestEdit = $attendance->edits()->latest()->first();
+
+        // ✅ ここで承認済みかチェック
+        if ($latestEdit && $latestEdit->status === 'approved') {
+            return redirect()->back()->with('error', 'この勤怠は承認済みのため、修正できません。');
+        }
+
         // 勤怠の日付を取得して、時刻と結合
         $date = $attendance->date;
         $clockIn = Carbon::parse($date . ' ' . $request->clock_in);
@@ -193,14 +201,6 @@ class UserAttendanceController extends Controller
         $attendance->clock_in = $clockIn;
         $attendance->clock_out = $clockOut;
         $attendance->save();
-
-        // 修正申請の登録
-        AttendanceEdit::create([
-            'user_id' => Auth::id(),
-            'attendance_id' => $attendance->id,
-            'status' => 'pending',
-            'reason' => $request->reason
-        ]);
 
         return redirect()->route('user.attendance.postRequestList')->with('success', '修正申請を送信しました');
     }

@@ -117,8 +117,13 @@ class AdminAttendanceController extends Controller
     //①詳細画面の表示
     public function editAttendance($id)
     {
-        $attendance = Attendance::with('user', 'breaks')->findOrFail($id);
-        return view('admin.admin_attendance_detail', compact('attendance'));
+        $attendance = Attendance::with(['user', 'breaks', 'attendanceEdits' => function ($q) {
+            $q->latest();
+        }])->findOrFail($id);
+
+        $latestEdit = $attendance->attendanceEdits->first();
+
+        return view('admin.admin_attendance_detail', compact('attendance', 'latestEdit'));
     }
 
 

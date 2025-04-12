@@ -16,7 +16,7 @@ class AdminController extends Controller
     }
 
     // 管理者ログイン処理
-    public function postAdminLogin(Request $request)
+    public function postAdminLogin(AdminLoginRequest $request)
     {
 
         $credentials = $request->only('email', 'password');

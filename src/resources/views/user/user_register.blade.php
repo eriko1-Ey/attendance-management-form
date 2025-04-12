@@ -16,17 +16,32 @@
         @csrf
         <div class="input-group">
             <label for="name">名前</label>
-            <input type="text" id="name" name="name" required />
+            <input type="text" id="name" name="name" placeholder="名前を入力" />
+        </div>
+        <div style="color:red">
+            @error('name')
+            {{ $message }}
+            @enderror
         </div>
 
         <div class="input-group">
             <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" required />
+            <input type="email" id="email" name="email" placeholder="メールアドレスを入力" />
+        </div>
+        <div style="color:red">
+            @error('email')
+            {{ $message }}
+            @enderror
         </div>
 
         <div class="input-group">
             <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password" placeholder="パスワードを入力" />
+        </div>
+        <div style="color:red">
+            @error('password')
+            {{ $message }}
+            @enderror
         </div>
 
         <div class="input-group">
@@ -35,7 +50,12 @@
                 type="password"
                 id="password_confirmation"
                 name="password_confirmation"
-                required />
+                placeholder="確認用パスワードを入力" />
+        </div>
+        <div style="color:red">
+            @error('password')
+            {{ $message }}
+            @enderror
         </div>
 
         <button type="submit" class="register-button">登録する</button>
