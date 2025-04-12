@@ -74,7 +74,7 @@ mysql:
 【ER図】
 
 
-![Image](https://github.com/user-attachments/assets/86156d6a-1b47-4cbb-aa52-2d73d1ea355e)
+
 
 
   
