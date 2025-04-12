@@ -73,7 +73,7 @@ mysql:
 
 【ER図】
 
-https://github.com/eriko1-Ey/attendance-management-form/issues/1
+![Image](https://github.com/user-attachments/assets/1c9f3327-a0a7-470a-9638-b1eab43377d1)
 
 
 
