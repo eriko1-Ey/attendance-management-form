@@ -34,11 +34,17 @@ mysql:
 4.　.envに以下の環境変数に編集する。
 
 　　　DB_CONNECTION=mysql
+   
 　　　DB_HOST=mysql
+   
 　　　DB_PORT=3306
+   
 　　　DB_DATABASE=laravel_db
+   
 　　　DB_USERNAME=laravel_user
+   
 　　　DB_PASSWORD=laravel_pass
+   
    
 5.　アプリケーションキーの作成(phpコンテナ内）
 　　php artisan key:generate
