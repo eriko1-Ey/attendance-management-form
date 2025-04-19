@@ -26,15 +26,23 @@ platform: linux/x86_64
 
 ### Laravel 環境構築
 
-1.
+1.  phpコンテナを実行する。
 
 ```
 docker compose exec php bash
 ```
 
-2.　 composer install を実行する。
+2.　 Laravelのパッケージをインストールする。
 
-3.　 cp .env.example .env を実行する。（実行後、exit で php コンテナを抜ける）
+```
+composer install
+```
+
+3.　 .envファイルを作成する。
+
+```
+cp .env.example .env
+```
 
 4.　.env に以下の環境変数に編集する。
 
