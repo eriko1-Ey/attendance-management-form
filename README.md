@@ -7,7 +7,7 @@
 1.　コードを clone する。
 
 ```
-git clone {link url}
+git clone git@github.com:eriko1-Ey/attendance-management-form.git
 ```
 
 2.　 docker を起動する。
