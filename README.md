@@ -54,31 +54,39 @@ DB_PASSWORD=laravel_pass
 
 5.　アプリケーションキーの作成(php コンテナ内）
 
+```
 php artisan key:generate
+```
 
 6.　マイグレーションの実行(php コンテナ内）
 
+```
 php artisan migrate
+```
 
 7.　シーディングの実行(php コンテナ内）
 
+```
 php artisan db:seed
-
+```
 ※admin → メールアドレス　admin@example.com パスワード　　 admin123
 
 一般ユーザー　 → 各ユーザーのメールアドレス　　パスワード　 password
 
 8.　シンボリックリンクの作成
 
+```
 php artisan storage/link
+```
 
 ※失敗した場合は、下記を実行する。
-
+```
 cd src/publilc
 
 unlink storage
 
 ln -s ../storage/app/public storage
+```
 
 【ER 図】
 
