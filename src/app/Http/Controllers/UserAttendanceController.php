@@ -147,7 +147,10 @@ class UserAttendanceController extends Controller
     {
         $attendance = Attendance::with('breaks', 'user')->findOrFail($id);
 
-        return view('user.user_attendance_detail', compact('attendance'));
+        // 修正申請の最新データを取得（なければ null）
+        $latestEdit = $attendance->edits()->latest()->first();
+
+        return view('user.user_attendance_detail', compact('attendance', 'latestEdit'));
     }
 
     // 修正申請処理

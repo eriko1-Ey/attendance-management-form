@@ -28,4 +28,10 @@ class Attendance extends Model
     {
         return $this->hasMany(AttendanceEdit::class);
     }
+
+
+    public function edits()
+    {
+        return $this->hasMany(AttendanceEdit::class);
+    }
 }

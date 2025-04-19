@@ -27,9 +27,15 @@
                 <tr>
                     <th>出勤・退勤</th>
                     <td>
-                        <input type="time" name="clock_in" value="{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif />
+                        <input type="time" name="clock_in"
+                            value="{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}"
+                            @if(isset($latestEdit) && in_array($latestEdit->status, ['approved', 'pending'])) disabled @endif />
+
                         〜
-                        <input type="time" name="clock_out" value="{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
+
+                        <input type="time" name="clock_out"
+                            value="{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}"
+                            @if(isset($latestEdit) && in_array($latestEdit->status, ['approved', 'pending'])) disabled @endif />
                     </td>
                 </tr>
                 <tr>
@@ -37,12 +43,16 @@
                     <td>
                         @foreach($attendance->breaks as $i => $break)
                         <div>
-                            <input type="time" name="breaks[{{ $i }}][start_time]" value="{{ \Carbon\Carbon::parse($break->start_time)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
+                            <input type="time" name="breaks[{{ $i }}][start_time]"
+                                value="{{ \Carbon\Carbon::parse($break->start_time)->format('H:i') }}"
+                                @if(isset($latestEdit) && in_array($latestEdit->status, ['approved', 'pending'])) disabled @endif />
                             〜
-                            <input type="time" name="breaks[{{ $i }}][end_time]" value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}" @if($latestEdit->status === 'approved') disabled @endif/>
+                            <input type="time" name="breaks[{{ $i }}][end_time]"
+                                value="{{ \Carbon\Carbon::parse($break->end_time)->format('H:i') }}"
+                                @if(isset($latestEdit) && in_array($latestEdit->status, ['approved', 'pending'])) disabled @endif />
                         </div>
                         @endforeach
-                        @if (!isset($latestEdit) || $latestEdit->status !== 'approved')
+                        @if (!isset($latestEdit) || !in_array($latestEdit->status, ['approved', 'pending']))
                         <div>
                             <input type="time" name="breaks[{{ count($attendance->breaks) }}][start_time]" />
                             〜
@@ -55,8 +65,8 @@
                     <th>備考</th>
                     <td>
                         <textarea name="reason" required
-                            @if(isset($latestEdit) && $latestEdit->status === 'approved') disabled @endif
-        >{{ old('reason', $latestEdit->reason ?? '') }}</textarea>
+                            @if(isset($latestEdit) && in_array($latestEdit->status, ['approved', 'pending'])) disabled @endif
+>{{ old('reason', $latestEdit->reason ?? '') }}</textarea>
                     </td>
                 </tr>
             </table>
